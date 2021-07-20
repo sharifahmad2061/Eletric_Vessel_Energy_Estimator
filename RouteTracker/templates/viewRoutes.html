@@ -185,7 +185,10 @@
                                                 
                         });
                         $('#chartContainer').css("display", "");
-
+                        response.issue.forEach((item) => {
+                            alert(item);
+                        });
+                        
                     },
                     // on error
                     error: function (response) {

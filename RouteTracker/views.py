@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect 
 from django.views import View 
 from django.views.generic import ListView, CreateView
+from django.contrib import messages
 
 from .models import Route, CustomUser
 from .forms import RouteForm
@@ -73,6 +74,7 @@ def calculate_SOC(SOC_previous, min_power, max_power, voltage, last_date_time, c
 def getOutputData(request):
     labels = []
     data = []
+    issue = []
     print("This is request", request.GET) 
     if request.method == "POST":
         routeName = request.POST.get('routeName', None) 
@@ -92,42 +94,42 @@ def getOutputData(request):
         for i, depart in enumerate(routeInfo.departure):
             #Departure
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.departure[i],last_Qn)
-            if calculated_SOC < 0.3:
+            if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
-                # Consider showing error in the web page        
+                issue.append("Error: SOC is less than 30%"+" at "+routeInfo.departure[i].strftime("%H:%M:%S"))      
             data.append(calculated_SOC)
             labels.append(routeInfo.departure[i])
             SOC_previous=calculated_SOC
-            last_min_power=routeInfo.minDeparturePow[i]
-            last_max_power=routeInfo.maxDeparturePow[i]
+            last_min_power=-1*routeInfo.minDeparturePow[i]
+            last_max_power=-1*routeInfo.maxDeparturePow[i]
             last_date_time=routeInfo.departure[i]
             #Transit
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.transit[i],last_Qn)
-            if calculated_SOC < 0.3:
+            if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
-                # Consider showing error in the web page        
+                issue.append("Error: SOC is less than 30%"+" at "+routeInfo.transit[i].strftime("%H:%M:%S"))       
             data.append(calculated_SOC)
             labels.append(routeInfo.transit[i])
             SOC_previous=calculated_SOC
-            last_min_power=routeInfo.minTransitPow[i]
-            last_max_power=routeInfo.maxTransitPow[i]
+            last_min_power=-1*routeInfo.minTransitPow[i]
+            last_max_power=-1*routeInfo.maxTransitPow[i]
             last_date_time=routeInfo.transit[i]
             #Arrival
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.arrival[i],last_Qn)
-            if calculated_SOC < 0.3:
+            if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
-                # Consider showing error in the web page        
+                issue.append("Error: SOC is less than 30%"+" at "+routeInfo.arrival[i].strftime("%H:%M:%S"))      
             data.append(calculated_SOC)
             labels.append(routeInfo.arrival[i])
             SOC_previous=calculated_SOC
-            last_min_power=routeInfo.minArrivalPow[i]
-            last_max_power=routeInfo.maxArrivalPow[i]
+            last_min_power=-1*routeInfo.minArrivalPow[i]
+            last_max_power=-1*routeInfo.maxArrivalPow[i]
             last_date_time=routeInfo.arrival[i]
             #Stay
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.stay[i],last_Qn)
-            if calculated_SOC < 0.3:
+            if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
-                # Consider showing error in the web page        
+                issue.append("Error: SOC is less than 30%"+" at "+routeInfo.stay[i].strftime("%H:%M:%S"))      
             data.append(calculated_SOC)
             labels.append(routeInfo.stay[i])
             SOC_previous=calculated_SOC
@@ -136,7 +138,8 @@ def getOutputData(request):
             last_date_time=routeInfo.stay[i]
 
         print('data', data)
-        return JsonResponse({'labels': labels, 'data': data}) 
+        return JsonResponse({'labels': labels, 'data': data, 'issue': issue}) 
+
     else:
         return redirect('/')
 
