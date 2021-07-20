@@ -63,6 +63,12 @@ def view_routes(request):
         }
         return render(request, 'viewRoutes.html', context)
 
+def calculate_SOC(SOC_previous, min_power, max_power, voltage, last_date_time, current_date_time, Qn):
+    average_power=(max_power+min_power)/2
+    load_current=average_power/voltage
+    second_diff=(current_date_time-last_date_time).total_seconds()
+    result=SOC_previous+load_current*second_diff/Qn
+    return result
 
 def getOutputData(request):
     labels = []
@@ -75,45 +81,60 @@ def getOutputData(request):
             routeInfo = Route.objects.get(routeTitle=routeName)
         except:
             return JsonResponse({})
-        avgDepartPow = statistics.mean([routeInfo.minDeparturePow, routeInfo.maxDeparturePow])
-        avgArrivalPow = statistics.mean([routeInfo.minArrivalPow, routeInfo.maxArrivalPow])
-        data.append(routeInfo.initialSOC)
-        labels.append(routeInfo.departure[0])
-        soc = None
+        #data.append(routeInfo.initialSOC)
+        #labels.append(routeInfo.departure[0])
+        SOC_previous=routeInfo.initialSOC
+        last_min_power=0
+        last_max_power=0
+        last_voltage=routeInfo.batteryRating
+        last_Qn=routeInfo.batteryCapacity
+        last_date_time=routeInfo.departure[0]
         for i, depart in enumerate(routeInfo.departure):
-            if i > 0: 
-                # Stay sections 
-                timeDelta = depart - routeInfo.stay[i-1] 
-                soc = soc - routeInfo.stayingPow/routeInfo.batteryCapacity * timeDelta.total_seconds()/3600 * 100 # change seconds to hours 
-                data.append(soc) 
-                labels.append(depart)
-                
-                 # Departures 
-                timeDelta = routeInfo.transit[i] - depart           
-                soc = soc - avgDepartPow/routeInfo.batteryCapacity * timeDelta.total_seconds()/3600 * 100 # change seconds to hours            
-                data.append(soc)
-                labels.append(routeInfo.transit[i])
-            else:
-                # Departures 
-                timeDelta = routeInfo.transit[i] - depart           
-                soc = routeInfo.initialSOC - avgDepartPow/routeInfo.batteryCapacity * timeDelta.total_seconds()/3600 * 100 # change seconds to hours            
-                data.append(soc)
-                labels.append(routeInfo.transit[i])
-                
-            # Transits 
-            timeDelta = routeInfo.arrival[i] - routeInfo.transit[i] 
-            print(timeDelta)
-            soc = soc - routeInfo.transitPow/routeInfo.batteryCapacity * timeDelta.total_seconds()/3600 * 100 # change seconds to hours 
-            data.append(soc)
+            #Departure
+            calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.departure[i],last_Qn)
+            if calculated_SOC < 0.3:
+                print("Error: SOC is less than 30%")
+                # Consider showing error in the web page        
+            data.append(calculated_SOC)
+            labels.append(routeInfo.departure[i])
+            SOC_previous=calculated_SOC
+            last_min_power=routeInfo.minDeparturePow[i]
+            last_max_power=routeInfo.maxDeparturePow[i]
+            last_date_time=routeInfo.departure[i]
+            #Transit
+            calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.transit[i],last_Qn)
+            if calculated_SOC < 0.3:
+                print("Error: SOC is less than 30%")
+                # Consider showing error in the web page        
+            data.append(calculated_SOC)
+            labels.append(routeInfo.transit[i])
+            SOC_previous=calculated_SOC
+            last_min_power=routeInfo.minTransitPow[i]
+            last_max_power=routeInfo.maxTransitPow[i]
+            last_date_time=routeInfo.transit[i]
+            #Arrival
+            calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.arrival[i],last_Qn)
+            if calculated_SOC < 0.3:
+                print("Error: SOC is less than 30%")
+                # Consider showing error in the web page        
+            data.append(calculated_SOC)
             labels.append(routeInfo.arrival[i])
-            # Arrivals 
-            timeDelta = routeInfo.stay[i] - routeInfo.arrival[i] 
-            chargingVal = (100/routeInfo.chargingTime) * (timeDelta.total_seconds()/60)  
-            print("charging val", chargingVal)         
-            soc = soc - avgArrivalPow/routeInfo.batteryCapacity * timeDelta.total_seconds()/3600 * 100 + chargingVal # change seconds to hours 
-            data.append(min(soc, 90))  
-            labels.append(routeInfo.stay[i])          
-            
+            SOC_previous=calculated_SOC
+            last_min_power=routeInfo.minArrivalPow[i]
+            last_max_power=routeInfo.maxArrivalPow[i]
+            last_date_time=routeInfo.arrival[i]
+            #Stay
+            calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.stay[i],last_Qn)
+            if calculated_SOC < 0.3:
+                print("Error: SOC is less than 30%")
+                # Consider showing error in the web page        
+            data.append(calculated_SOC)
+            labels.append(routeInfo.stay[i])
+            SOC_previous=calculated_SOC
+            last_min_power=routeInfo.minStayPow[i]
+            last_max_power=routeInfo.maxStayPow[i]
+            last_date_time=routeInfo.stay[i]
+
         print('data', data)
         return JsonResponse({'labels': labels, 'data': data}) 
     else:
