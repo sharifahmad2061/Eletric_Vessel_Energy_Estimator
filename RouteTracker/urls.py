@@ -1,12 +1,16 @@
-from django.urls import path 
-from .views import AboutView, RouteListView, RouteCreateView, view_routes, getOutputData
-from django.contrib.auth.decorators import login_required
+from django.urls import path, re_path
+from .views import AboutView,   view_routes, getOutputData, getRoutes
 
 from django.conf.urls import url
 from RouteTracker import views
+from django.views.generic import RedirectView
+
 
 urlpatterns = [
-    path('about/', login_required(AboutView.as_view()), name="about"),
-    path('view/', login_required(view_routes), name="view"), 
-    path('view/outputData', login_required(getOutputData), name='getOutputData'),    
+    path('about/', AboutView.as_view(), name="about"),
+    path('view/', view_routes, name="view"), 
+    path('view/outputData', getOutputData, name='getOutputData'),   
+    path('view/getRoutes', getRoutes, name='getRoutes'), 
+    re_path(r'^.*/$', RedirectView.as_view(permanent=False, url="view/"))
+   
 ]

@@ -3,29 +3,16 @@ from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 
-from django.contrib.auth.models import User
 from EVEESystem.settings import DEFAULT_FROM_EMAIL
 from django.core.mail import send_mail 
 from .validators import validateFileExtension
 
-
-class CustomUser(AbstractUser):    
-    userId        = models.AutoField(primary_key=True)
-    createdDate = models.DateTimeField(auto_now=False, auto_now_add=True)
-    lastAccessDate  = models.DateTimeField(auto_now=True, auto_now_add=False)
-    isAdminUser = models.BooleanField(default=False)
-    studentId = models.CharField(max_length=10)
-    
-    class Meta:
-        ordering =["-username"]
-        verbose_name = 'User'
 
 # To sync db -> python manage.py migrate --run-syncdb
 # Manually delete migrations folder, delete sqlite3 then run makemigrations then migrate 
 
 class Route(models.Model):
     routeId            = models.AutoField(primary_key=True)
-    user               = models.ForeignKey(CustomUser, verbose_name="User", on_delete=models.CASCADE)    
     dateAdded          = models.DateTimeField(auto_now=False, auto_now_add=True)
     initialSOC         = models.IntegerField(verbose_name="Initial SOC (%)")
     batteryCapacity    = models.IntegerField(verbose_name="Battery Capacity (Kwh)") # This is in kwh.    
@@ -33,20 +20,20 @@ class Route(models.Model):
     batteryRating      = models.IntegerField(verbose_name="Battery Rating (VDC)") 
     #chargingTime       = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
     fileName           = models.FileField(upload_to='uploads/%Y/%m/%d/', max_length=100, verbose_name="Vessel Timetable File", validators=[validateFileExtension], blank=True, null=True)  
-    thresholdPower     = models.IntegerField(verbose_name="Threshold Power")
+    thresholdPower     = models.IntegerField(verbose_name="Threshold Power", null=True)
     departure          = ArrayField(models.DateTimeField(), verbose_name="Departure")
     transit            = ArrayField(models.DateTimeField(), verbose_name="Transit")
     arrival            = ArrayField(models.DateTimeField(), verbose_name="Arrival")
     stay               = ArrayField(models.DateTimeField(), verbose_name="Stay")
     calcSOC            = ArrayField(models.IntegerField(), null=True, blank=True)
     minDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Min Departure Power Req") # Power requirements 
-    maxDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Max Departure Power Req") 
-    minTransitPow      = ArrayField(models.IntegerField(), verbose_name="Min Transit Power Req") 
-    maxTransitPow      = ArrayField(models.IntegerField(), verbose_name="Max Transit Power Req")
-    minArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Min Arrival Power Req") 
-    maxArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Max Arrival Power Req") 
-    minStayPow         = ArrayField(models.IntegerField(), verbose_name="Min Stay Power Req") 
-    maxStayPow         = ArrayField(models.IntegerField(), verbose_name="Max Stay Power Req")
+    maxDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Max Departure Power Req", null=True) # Power requirements 
+    minTransitPow      = ArrayField(models.IntegerField(), verbose_name="Min Transit Power Req", null=True) 
+    maxTransitPow      = ArrayField(models.IntegerField(), verbose_name="Max Transit Power Req", null=True)
+    minArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Min Arrival Power Req", null=True) 
+    maxArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Max Arrival Power Req",null=True) 
+    minStayPow         = ArrayField(models.IntegerField(), verbose_name="Min Stay Power Req", null=True) 
+    maxStayPow         = ArrayField(models.IntegerField(), verbose_name="Max Stay Power Req", null=True)
     
     def save(self, force_insert=False, force_update=False, *args, **kwargs):        
             

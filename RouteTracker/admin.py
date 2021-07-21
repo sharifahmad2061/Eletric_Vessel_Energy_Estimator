@@ -1,16 +1,13 @@
 from django.contrib import admin
-from .models import Route, CustomUser
-from django.contrib.auth.models import User
+from .models import Route
 
 class JobsAdmin(admin.ModelAdmin):
     pass
 
-class UsersAdmin(admin.ModelAdmin):
-    pass       
-    
+
 
 admin.site.register(Route, JobsAdmin)
-admin.site.register(CustomUser, UsersAdmin)
+
 
 
 # admin = list(CustomUser.objects.filter(username='admin'))  # %TODO: This creates error when re-rendering models (delete migrations files,sqlite, then makemgirations/migrat)

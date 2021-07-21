@@ -25,9 +25,7 @@ urlpatterns = [
     path('', RedirectView.as_view(url="/routes/view")),
     path('admin/', admin.site.urls),
     path('routes/', include('RouteTracker.urls')),
-    path('accounts/', include('allauth.urls')),   
-    path('payments/', include('payments.urls')),
-    re_path(r'^.*/$', RedirectView.as_view(permanent=False, url="/"))
+   # re_path(r'^.*/$', RedirectView.as_view(permanent=False, url="/routes/view/"))
 ] 
 
 

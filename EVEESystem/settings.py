@@ -52,32 +52,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',   
-    
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+    'django.contrib.sites',    
+     'django_extensions',  
     
     'crispy_forms',    
     'RouteTracker',
     'bootstrap4',
-    'payments'
 ]
 SITE_ID = 1
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django amdin, regardless of allauth 
-    'django.contrib.auth.backends.ModelBackend',
-    # allauth specific authentication methods such as login by email 
-    'allauth.account.auth_backends.AuthenticationBackend'    
+    # Needed to login by username in Django amdin, regardless of allauth: has to be a tuple 
+    'django.contrib.auth.backends.ModelBackend',   
 )
-AUTH_USER_MODEL = 'RouteTracker.CustomUser'
 
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-ACCOUNT_EMAIL_REQUIRED = True
-#ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7 
-# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-LOGIN_REDIRECT_URL = "/"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -202,3 +190,5 @@ DISABLE_COLLECTSTATIC=1
 import dj_database_url 
 prod_db  =  dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
+
+# Reset local postgres db: >python manage.py reset_db

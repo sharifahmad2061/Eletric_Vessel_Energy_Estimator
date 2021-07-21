@@ -20,9 +20,11 @@
                         </div>     
                          <div class="col-sm-6 ">
                              {{ field }} 
-                        </div>     
-                   </div>           
-               {% endfor %}              
+                        </div>                          
+                   </div>   
+                        
+               {% endfor %}     
+               <i class="fas fa-exclamation"></i>              
              <button type="submit" class="btn btn-primary">Submit</button>
             </form>   
            
@@ -39,15 +41,38 @@
          <div class="bg-info ">
              <form class="form-inline" method="post">                  
                {% csrf_token %} 
+                <button type="button" class="btn btn-primary js-modal-button mr-2" data-toggle="modal" data-target="#routeModal">
+                View Available Routes
+                </button>
                 <label for="rname">Route Name:</label><br>
                 <input style="margin-right:1rem;" type="text" id="rname" name="rname"><br>             
               <button type="submit" class="btn btn-primary js-submit">Submit</button>
             </form>  
+          
             <div id="chartContainer"  style="display:none;">
                 <canvas id="routeChart"></canvas>
             </div>           
         </div>            
     </div>    
+    <!-- Modal -->
+    <div class="modal fade" id="routeModal" tabindex="-1" role="dialog" aria-labelledby="routeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="routeModalLabel">Available Routes</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body js-modal-body">
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>           
+        </div>
+        </div>
+    </div>
+    </div>
    
 {% endblock %}
 
@@ -81,20 +106,7 @@
                 if (rname === "") {
                     return;
                 } 
-                var newClickHandler = function(e, legendItem, legend) {
-                        const index = legendItem.datasetIndex;
-                        const ci = legend.chart;
-                        if (ci.isDatasetVisible(index)) {
-                            ci.hide(index);
-                            legendItem.hidden = true;
-                        } else {
-                            ci.show(index);
-                            legendItem.hidden = false;
-                        }
-                        legendItem.fillStyle =  '#32a852';
-                }
- 
-
+                
                 // Setting up chart stuff  and ensure that previous one is destroyed first               
                 if (routeChart !== undefined){
                     routeChart.destroy(); 
@@ -199,6 +211,23 @@
 
                 return false;
             });
+
+            $('.js-modal-button').on('click', function (e) {
+                    $.ajax({
+                    url: "{% url 'getRoutes' %}",
+                    // on success
+                    success: function (response) {
+                       let routeNames = "";
+                       response.Routes.forEach(elem => routeNames += elem + "\n");
+                       $('.js-modal-body').html(routeNames);
+                    },
+                    // on error
+                    error: function (response) {
+                        // alert the error if any error occured
+                        console.log(response.errors)
+                    }
+                });
+             });
         })
     </script>
     {% endblock javascript %}
