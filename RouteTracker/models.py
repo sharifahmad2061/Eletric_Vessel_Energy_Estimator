@@ -33,6 +33,7 @@ class Route(models.Model):
     batteryRating      = models.IntegerField(verbose_name="Battery Rating (VDC)") 
     #chargingTime       = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
     fileName           = models.FileField(upload_to='uploads/%Y/%m/%d/', max_length=100, verbose_name="Vessel Timetable File", validators=[validateFileExtension], blank=True, null=True)  
+    thresholdPower     = models.IntegerField(verbose_name="Threshold Power")
     departure          = ArrayField(models.DateTimeField(), verbose_name="Departure")
     transit            = ArrayField(models.DateTimeField(), verbose_name="Transit")
     arrival            = ArrayField(models.DateTimeField(), verbose_name="Arrival")
