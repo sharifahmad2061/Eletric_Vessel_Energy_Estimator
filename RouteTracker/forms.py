@@ -8,7 +8,7 @@ class RouteForm(ModelForm):
     class Meta:
         model = Route
         verbose_name = "Route List"
-        exclude = ('routeId', 'user', 'dateAdded','calcSOC')
+        exclude = ('routeId', 'user', 'dateAdded','calcSOC','fileName')
 
 
 
