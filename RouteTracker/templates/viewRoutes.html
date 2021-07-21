@@ -113,7 +113,7 @@
                     success: function (response) {
                         console.log("response", response)
                         if (response.data === undefined){
-                            return; 
+                            return; // return 
                         }
 
                         console.log("success in getting data")
@@ -185,7 +185,10 @@
                                                 
                         });
                         $('#chartContainer').css("display", "");
-
+                        response.issue.forEach((item) => {
+                            alert(item);
+                        });
+                        
                     },
                     // on error
                     error: function (response) {

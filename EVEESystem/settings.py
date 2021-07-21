@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["uvic-3dps-2020.herokuapp.com", "*"]
+ALLOWED_HOSTS = ["https://eveesystemapp.herokuapp.com/", "*"]
 
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
@@ -198,3 +198,7 @@ DISABLE_COLLECTSTATIC=1
 # del DATABASES['default']['OPTIONS']['sslmode']
 
 #  Create default admin super user 
+
+import dj_database_url 
+prod_db  =  dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(prod_db)

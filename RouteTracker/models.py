@@ -31,19 +31,22 @@ class Route(models.Model):
     batteryCapacity    = models.IntegerField(verbose_name="Battery Capacity (Kwh)") # This is in kwh.    
     routeTitle         = models.CharField(max_length=50, verbose_name="Route Title", default="")
     batteryRating      = models.IntegerField(verbose_name="Battery Rating (VDC)") 
-    chargingTime       = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
+    #chargingTime       = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
     fileName           = models.FileField(upload_to='uploads/%Y/%m/%d/', max_length=100, verbose_name="Vessel Timetable File", validators=[validateFileExtension], blank=True, null=True)  
+    thresholdPower     = models.IntegerField(verbose_name="Threshold Power")
     departure          = ArrayField(models.DateTimeField(), verbose_name="Departure")
     transit            = ArrayField(models.DateTimeField(), verbose_name="Transit")
     arrival            = ArrayField(models.DateTimeField(), verbose_name="Arrival")
     stay               = ArrayField(models.DateTimeField(), verbose_name="Stay")
     calcSOC            = ArrayField(models.IntegerField(), null=True, blank=True)
-    minDeparturePow    = models.IntegerField(verbose_name="Min Departure Power Req") # Power requirements 
-    maxDeparturePow    = models.IntegerField(verbose_name="Max Departure Power Req") 
-    transitPow         = models.IntegerField(verbose_name="Transit Power Req") 
-    minArrivalPow      = models.IntegerField(verbose_name="Min Arrival Power Req") 
-    maxArrivalPow      = models.IntegerField(verbose_name="Max Arrival Power Req") 
-    stayingPow         = models.IntegerField(verbose_name="Stay Power Req") 
+    minDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Min Departure Power Req") # Power requirements 
+    maxDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Max Departure Power Req") 
+    minTransitPow      = ArrayField(models.IntegerField(), verbose_name="Min Transit Power Req") 
+    maxTransitPow      = ArrayField(models.IntegerField(), verbose_name="Max Transit Power Req")
+    minArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Min Arrival Power Req") 
+    maxArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Max Arrival Power Req") 
+    minStayPow         = ArrayField(models.IntegerField(), verbose_name="Min Stay Power Req") 
+    maxStayPow         = ArrayField(models.IntegerField(), verbose_name="Max Stay Power Req")
     
     def save(self, force_insert=False, force_update=False, *args, **kwargs):        
             
