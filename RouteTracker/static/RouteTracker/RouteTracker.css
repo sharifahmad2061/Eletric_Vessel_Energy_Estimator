@@ -125,3 +125,46 @@
     }
 }
 
+.successContainer, .cancelledContainer{
+    margin: auto;
+    margin-top: 3rem;
+}
+
+#baseFooter{
+    position:fixed;
+    width: 100%;
+    height: 2rem;
+    bottom:0;
+}
+
+.sticky{
+    position:fixed;
+    top:0;
+    z-index: 1000;
+    width: 92%;
+    margin-right: 2rem;
+}
+
+@media(min-width:425px){
+    .sticky{
+        width:94%;
+    }
+}
+
+@media(min-width:768px){
+    .sticky{
+        width:96%;
+    }
+}
+
+@media(min-width:1024px){
+    .sticky{
+        width:97%;
+    }
+}
+
+@media(min-width:1440px){
+    .sticky{
+        width:98%;
+    }
+}

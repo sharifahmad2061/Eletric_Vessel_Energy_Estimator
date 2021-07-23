@@ -15,7 +15,6 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'RouteTracker/RouteTracker.css' %}">
-    <link rel="stylesheet" href="{% static 'payments.css' %}">
      <div class="container-fluid js-nav">                   
             <nav class="navbar navbar-expand-lg navbar-light mainNavbar">
                 <a class="navbar-brand" href="{% url 'about' %}" style="color:#0f2189; padding-right:10px; font-weight: bold">EVEE System</a>
@@ -27,7 +26,6 @@
                         {% if user.is_staff %}
                            <a style="padding:10px; color:#89480f" class="nav-item navbar-link" id="Navbutton" href="{% url 'admin:index' %}">Super Admin</a>
                         {% endif %}
-                        <a class="nav-item navbar-link btn btn-danger logoutBtn" href="{% url 'account_logout' %}" role="button">Logout</a>
                     </div>
                 </div>
                 <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,5 +61,5 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="{% static 'payments.js' %}"></script> 
+    <script src="{% static 'RouteTracker/RouteTracker.js' %}"></script> 
 </html>
