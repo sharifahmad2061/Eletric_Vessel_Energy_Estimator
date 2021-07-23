@@ -10,22 +10,72 @@
            <h3 id="badge" style="color:white;"> <span class="badge badge-pill badge-dark">Vessel Route Input</span></h3>
         </div>  
          <div class="bg-info ">
-             <form action="{% url 'view' %}" method="post">                  
+             <form action="{% url 'view' %}" method="post">
                {% csrf_token %} 
-               {% for field in form  %}
-              
-                   <div class="row pb-1 mx-auto">
-                        <div class="col-sm-6 ">
-                            <b>{{ field.label_tag }}</b>   
-                        </div>     
-                         <div class="col-sm-6 ">
-                             {{ field }} 
-                        </div>                          
-                   </div>   
-                        
-               {% endfor %}     
-               <i class="fas fa-exclamation"></i>              
-             <button type="submit" class="btn btn-primary">Submit</button>
+               {% bootstrap_field form.initialSOC layout='horizontal' %}
+               {% bootstrap_field form.batteryCapacity layout='horizontal' %}
+               {% bootstrap_field form.routeTitle layout='horizontal' %}
+               {% bootstrap_field form.batteryRating layout='horizontal' %}
+               <p>Power Requirements (kw)</p>
+               <div class="row mb-1">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4 text-center">Min</div>
+                <div class="col-sm-4 text-center">Max</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">Departure</div>
+                    <div class="col-sm-4">{% bootstrap_field form.minDeparturePow show_label=False %}</div>
+                    <div class="col-sm-4">{% bootstrap_field form.maxDeparturePow show_label=False %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">Transit</div>
+                    <div class="col-sm-4">{% bootstrap_field form.minTransitPow show_label=False %}</div>
+                    <div class="col-sm-4">{% bootstrap_field form.maxTransitPow show_label=False %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">Arrival</div>
+                    <div class="col-sm-4">{% bootstrap_field form.minArrivalPow show_label=False %}</div>
+                    <div class="col-sm-4">{% bootstrap_field form.maxArrivalPow show_label=False %}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">Stay</div>
+                    <div class="col-sm-4">{% bootstrap_field form.minStayPow show_label=False %}</div>
+                    <div class="col-sm-4">{% bootstrap_field form.maxStayPow show_label=False %}</div>
+                </div>
+               <p>Times</p>
+               <div class="row">
+                   <div class="col-sm-3">Departure Time</div>
+                   <div class="col-sm-3">Transit Time</div>
+                   <div class="col-sm-3">Arrival time</div>
+                   <div class="col-sm-3">Charging Time</div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-3">
+                       <div class="form-group">
+                           <input type="datetime-local" name="departure_0" class="form-control" title="" required="" id="id_departure_0">
+                       </div>
+                   </div>
+                   <div class="col-sm-3">
+                       <div class="form-group">
+                           <input type="datetime-local" name="transit_0" class="form-control" title="" required="" id="id_transit_0">
+                       </div>
+                   </div>
+                   <div class="col-sm-3">
+                       <div class="form-group">
+                           <input type="datetime-local" name="arrival_0" class="form-control" title="" required="" id="id_arrival_0">
+                       </div>
+                   </div>
+                   <div class="col-sm-3">
+                       <div class="form-group">
+                           <input type="datetime-local" name="stay_0" class="form-control" title="" required="" id="id_stay_0">
+                       </div>
+                   </div>
+               </div>
+               <div class="d-flex justify-content-end" id="add-button-block">
+                   <div><button type="button" class="btn btn-dark" id="add-trip-timings"><i class="fas fa-plus-circle fa-2x"></i></button></div>
+               </div>
+               <i class="fas fa-exclamation"></i>
+               {% buttons submit='SUBMIT' %}{% endbuttons %}
             </form>   
            
         </div>            
@@ -228,6 +278,23 @@
                     }
                 });
              });
+            let add_trip_timings_button = $('#add-trip-timings');
+            let add_button_block = $('#add-button-block');
+            let departure_ind, transit_ind, arrival_ind, stay_ind;
+            departure_ind = transit_ind = arrival_ind = stay_ind = 1;
+            add_trip_timings_button.click((e) => {
+                // console.log("invoked");
+                let new_timing_row = $(`<div class="row">
+                        <div class="col-sm-3"><div class="form-group"><input type="datetime-local" name="departure_${departure_ind}" class="form-control" title="" required="" id="id_departure_${departure_ind}"></div></div>
+                        <div class="col-sm-3"><div class="form-group"><input type="datetime-local" name="transit_${transit_ind}" class="form-control" title="" required="" id="id_transit_${transit_ind}"></div></div>
+                        <div class="col-sm-3"><div class="form-group"><input type="datetime-local" name="arrival_${arrival_ind}" class="form-control" title="" required="" id="id_arrival_${arrival_ind}"></div></div>
+                        <div class="col-sm-3"><div class="form-group"><input type="datetime-local" name="stay_${stay_ind}" class="form-control" title="" required="" id="id_stay_${stay_ind}"></div></div>
+                    </div>
+                    `);
+                // console.log('new timing row created');
+                // console.log(new_timing_row);
+                new_timing_row.insertBefore(add_button_block);
+            });
         })
     </script>
     {% endblock javascript %}
