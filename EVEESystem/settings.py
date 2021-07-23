@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'crispy_forms',    
     'RouteTracker',
     'bootstrap4',
+    'fontawesome-free',
 ]
 SITE_ID = 1
 CRISPY_TEMPLATE_PACK = "bootstrap4"
