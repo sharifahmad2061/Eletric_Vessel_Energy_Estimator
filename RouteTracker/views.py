@@ -1,5 +1,4 @@
 from django.views.generic import TemplateView 
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect 
 from django.shortcuts import render 
 from django.shortcuts import redirect 
@@ -7,7 +6,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView
 from django.contrib import messages
 
-from .models import Route, CustomUser
+from .models import Route
 from .forms import RouteForm
 from django.http import JsonResponse
 import statistics
@@ -18,6 +17,7 @@ from .models import Author
 
 class AboutView(TemplateView):
     template_name = "about.html"
+    
 
 class RouteListView(ListView):
     template_name = "viewRoutes.html"
@@ -45,17 +45,17 @@ class RouteCreateView(CreateView):
 def view_routes(request):
     """ Meant to gather route details and display SOC levels """
     user = request.user
+    instance = None 
     if request.method == "POST":
-        form = RouteForm(request.POST)
+        instance = Route.objects.filter(routeTitle=request.POST.get("routeTitle")).first()
+        form = RouteForm(request.POST, instance=instance)
         if form.is_valid():
            route = form.save(commit=False) # get the new route without saving to database
            route.user = user # Add the current user to the record 
            route.save() # Save route information to the database
-           print("Calculating soc ")
-           # Calculate soc here 
-           return JsonResponse({'data_SOC':[1,2]})
-        else:
-           return render(request, 'viewRoutes.html', {'form': form})
+           form = RouteForm() # blank form if data has been saved            
+      
+        return render(request, 'viewRoutes.html', {'form': form})
 
     else:
         form = RouteForm() 
@@ -63,6 +63,15 @@ def view_routes(request):
             'form': form
         }
         return render(request, 'viewRoutes.html', context)
+    
+def getRoutes(request):
+    """ Used to view the available routes that have been saved """
+    results = {"Routes": ["There are no Routes present!"]}
+    routes = list(Route.objects.all().values_list('routeTitle', flat=True))
+    if len(routes) > 0:
+        results["Routes"] = routes 
+    return JsonResponse(results)
+    
 
 def calculate_SOC(SOC_previous, min_power, max_power, voltage, last_date_time, current_date_time, Qn):
     average_power=(max_power+min_power)/2
@@ -80,8 +89,9 @@ def getOutputData(request):
         routeName = request.POST.get('routeName', None) 
         routeInfo = None
         try:
-            routeInfo = Route.objects.get(routeTitle=routeName)
-        except:
+            routeInfo = Route.objects.get(routeTitle=routeName)           
+        except Exception as ex:
+            print("Route not found with err", ex)
             return JsonResponse({})
         SOC_previous=routeInfo.initialSOC
         last_min_power=0

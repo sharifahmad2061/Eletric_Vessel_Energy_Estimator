@@ -1,7 +1,6 @@
 from django.forms import ModelForm
-from allauth.account.forms import SignupForm
 from django import forms
-from .models import Route, CustomUser
+from .models import Route
 
 
 class RouteForm(ModelForm):    
@@ -9,6 +8,9 @@ class RouteForm(ModelForm):
         model = Route
         verbose_name = "Route List"
         exclude = ('routeId', 'user', 'dateAdded','calcSOC','fileName')
+        widgets = {
+            
+        }
 
 
 
