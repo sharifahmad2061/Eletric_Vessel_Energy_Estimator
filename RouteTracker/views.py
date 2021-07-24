@@ -113,6 +113,7 @@ def getOutputData(request):
         routeInfo.maxArrivalPow    = [x*1000 for x in routeInfo.maxArrivalPow]
         routeInfo.minStayPow       = [x*1000 for x in routeInfo.minStayPow]
         routeInfo.maxStayPow       = [x*1000 for x in routeInfo.maxStayPow]
+        routeInfo.thresholdPower *= 1000
 
         SOC_previous=routeInfo.initialSOC
         last_min_power=0
