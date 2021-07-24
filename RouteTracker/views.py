@@ -103,6 +103,17 @@ def getOutputData(request):
         except Exception as ex:
             print("Route not found with err", ex)
             return JsonResponse({})
+
+        # change kw to w
+        routeInfo.minDeparturePow  = [x*1000 for x in routeInfo.minDeparturePow]
+        routeInfo.maxDeparturePow  = [x*1000 for x in routeInfo.maxDeparturePow]
+        routeInfo.minTransitPow    = [x*1000 for x in routeInfo.minTransitPow]
+        routeInfo.maxTransitPow    = [x*1000 for x in routeInfo.maxTransitPow]
+        routeInfo.minArrivalPow    = [x*1000 for x in routeInfo.minArrivalPow]
+        routeInfo.maxArrivalPow    = [x*1000 for x in routeInfo.maxArrivalPow]
+        routeInfo.minStayPow       = [x*1000 for x in routeInfo.minStayPow]
+        routeInfo.maxStayPow       = [x*1000 for x in routeInfo.maxStayPow]
+
         SOC_previous=routeInfo.initialSOC
         last_min_power=0
         last_max_power=0
