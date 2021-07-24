@@ -108,8 +108,13 @@ def getOutputData(request):
             data.append(calculated_SOC)
             labels.append(routeInfo.departure[i])
             SOC_previous=calculated_SOC
-            last_min_power=-1*(routeInfo.minDeparturePow[i]-routeInfo.thresholdPower)
-            last_max_power=-1*(routeInfo.maxDeparturePow[i]-routeInfo.thresholdPower)
+            # if we are in hybrid electric use threshold power otherwise not
+            if routeInfo.propulsionMethod == 'hybrid electric':
+                last_min_power=-1*(routeInfo.minDeparturePow[i]-routeInfo.thresholdPower)
+                last_max_power=-1*(routeInfo.maxDeparturePow[i]-routeInfo.thresholdPower)
+            else:
+                last_min_power=-1*(routeInfo.minDeparturePow[i])
+                last_max_power=-1*(routeInfo.maxDeparturePow[i])
             last_date_time=routeInfo.departure[i]
             #Transit
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.transit[i],last_Qn)
@@ -119,8 +124,13 @@ def getOutputData(request):
             data.append(calculated_SOC)
             labels.append(routeInfo.transit[i])
             SOC_previous=calculated_SOC
-            last_min_power=-1*(routeInfo.minTransitPow[i]-routeInfo.thresholdPower)
-            last_max_power=-1*(routeInfo.maxTransitPow[i]-routeInfo.thresholdPower)
+            if routeInfo.propulsionMethod == 'hybrid electric':
+                last_min_power=-1*(routeInfo.minTransitPow[i]-routeInfo.thresholdPower)
+                last_max_power=-1*(routeInfo.maxTransitPow[i]-routeInfo.thresholdPower)
+            else:
+                last_min_power=-1*(routeInfo.minTransitPow[i])
+                last_max_power=-1*(routeInfo.maxTransitPow[i])
+
             last_date_time=routeInfo.transit[i]
             #Arrival
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.arrival[i],last_Qn)
@@ -130,8 +140,12 @@ def getOutputData(request):
             data.append(calculated_SOC)
             labels.append(routeInfo.arrival[i])
             SOC_previous=calculated_SOC
-            last_min_power=-1*(routeInfo.minArrivalPow[i]-routeInfo.thresholdPower)
-            last_max_power=-1*(routeInfo.maxArrivalPow[i]-routeInfo.thresholdPower)
+            if routeInfo.propulsionMethod == 'hybrid electric':
+                last_min_power=-1*(routeInfo.minArrivalPow[i]-routeInfo.thresholdPower)
+                last_max_power=-1*(routeInfo.maxArrivalPow[i]-routeInfo.thresholdPower)
+            else:
+                last_min_power=-1*(routeInfo.minArrivalPow[i])
+                last_max_power=-1*(routeInfo.maxArrivalPow[i])
             last_date_time=routeInfo.arrival[i]
             #Stay
             calculated_SOC=calculate_SOC(SOC_previous,last_min_power,last_max_power,last_voltage,last_date_time,routeInfo.stay[i],last_Qn)
@@ -141,8 +155,16 @@ def getOutputData(request):
             data.append(calculated_SOC)
             labels.append(routeInfo.stay[i])
             SOC_previous=calculated_SOC
-            last_min_power=routeInfo.minStayPow[i]-routeInfo.thresholdPower
-            last_max_power=routeInfo.maxStayPow[i]-routeInfo.thresholdPower
+            if routeInfo.propulsionMethod == 'hybrid electric':
+                if routeInfo.dockedChargingMethod == 'grid power':
+                    last_min_power=routeInfo.minStayPow[i]
+                    last_max_power=routeInfo.maxStayPow[i]
+                else:
+                    last_min_power=routeInfo.minStayPow[i]-routeInfo.thresholdPower
+                    last_max_power=routeInfo.maxStayPow[i]-routeInfo.thresholdPower
+            else:
+                last_min_power=routeInfo.minStayPow[i]
+                last_max_power=routeInfo.maxStayPow[i]
             last_date_time=routeInfo.stay[i]
 
         print('data', data)
