@@ -187,14 +187,14 @@ def getOutputData(request):
             SOC_previous=calculated_SOC
             if routeInfo.propulsionMethod == 'hybrid electric':
                 if routeInfo.dockedChargingMethod == 'grid power':
-                    last_min_power=-1 * routeInfo.minStayPow[i]
-                    last_max_power= -1 * routeInfo.maxStayPow[i]
+                    last_min_power= routeInfo.minStayPow[i]
+                    last_max_power= routeInfo.maxStayPow[i]
                 else:
                     last_min_power=-1 * (routeInfo.minStayPow[i]-routeInfo.thresholdPower)
                     last_max_power=-1 * (routeInfo.maxStayPow[i]-routeInfo.thresholdPower)
             else:
-                last_min_power= -1 * routeInfo.minStayPow[i]
-                last_max_power= -1 * routeInfo.maxStayPow[i]
+                last_min_power= routeInfo.minStayPow[i]
+                last_max_power= routeInfo.maxStayPow[i]
             last_date_time=routeInfo.stay[i]
 
         print('data', data)
