@@ -12,12 +12,36 @@
          <div class="bg-info ">
              <form action="{% url 'view' %}" method="post">
                {% csrf_token %} 
+               {% bootstrap_field form.routeTitle layout='horizontal' %}
                {% bootstrap_field form.initialSOC layout='horizontal' %}
                {% bootstrap_field form.batteryCapacity layout='horizontal' %}
-               {% bootstrap_field form.routeTitle layout='horizontal' %}
                {% bootstrap_field form.batteryRating layout='horizontal' %}
-               {% bootstrap_field form.thresholdPower layout='horizontal' %}
-               <p>Power Requirements (kw)</p>
+               <div class="row">
+                    <div class="col-sm-4">{{ form.propulsionMethod.label }}</div>
+                    {% for radio in form.propulsionMethod %}
+                    <div class="col-sm-4 text-center">{{radio.choice_label}}</div>
+                    {% endfor %}
+                </div>
+               <div class="row mb-1">
+                    <div class="col-sm-4"></div>
+                    {% for radio in form.propulsionMethod %}
+                    <div class="col-sm-4 text-center">{{radio.tag}}</div>
+                    {% endfor %}
+               </div>
+               <div class="row d-none docked-charging-method">
+                    <div class="col-sm-4">{{ form.dockedChargingMethod.label }}</div>
+                    {% for radio in form.dockedChargingMethod %}
+                    <div class="col-sm-4 text-center">{{radio.choice_label}}</div>
+                    {% endfor %}
+                </div>
+               <div class="row mb-1 d-none docked-charging-method">
+                    <div class="col-sm-4"></div>
+                    {% for radio in form.dockedChargingMethod %}
+                    <div class="col-sm-4 text-center">{{radio.tag}}</div>
+                    {% endfor %}
+               </div>
+               {% bootstrap_field form.thresholdPower layout='horizontal' form_group_class='d-none threshold-power' %}
+               <p class="text-center">Power Requirements (kw)</p>
                <div class="row mb-1">
                 <div class="col-sm-4"></div>
                 <div class="col-sm-4 text-center">Min</div>
@@ -295,6 +319,30 @@
                 // console.log(new_timing_row);
                 new_timing_row.insertBefore(add_button_block);
             });
+
+            // show hide docked charging method
+            let propulsion_method = $('input[type=radio][name=propulsionMethod]');
+            let hybrid_electric = $('#id_propulsionMethod_1');
+            let docked_charging_method = $('.docked-charging-method');
+            let threshold_power = $('.threshold-power');
+            propulsion_method.change((e) => {
+                // console.log('invoked');
+                if (hybrid_electric.is(':checked')) {
+                    // console.log('if')
+                    // console.log(docked_charging_method)
+                    docked_charging_method.each((index, el) => {
+                        $(el).removeClass('d-none');
+                    });
+                    threshold_power.removeClass('d-none');
+                }
+                else{
+                    docked_charging_method.each((index, el) => {
+                        $(el).addClass('d-none');
+                    });
+                    threshold_power.addClass('d-none');
+                    threshold_power.val = '';
+                }
+            })
         })
     </script>
     {% endblock javascript %}

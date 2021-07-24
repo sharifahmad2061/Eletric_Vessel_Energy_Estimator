@@ -15,7 +15,8 @@ class RouteForm(ModelForm):
         verbose_name = "Route List"
         exclude = ('routeId', 'user', 'dateAdded','calcSOC','fileName')
         widgets = {
-            
+            'propulsionMethod': forms.RadioSelect(),
+            'dockedChargingMethod': forms.RadioSelect(),
         }
 
 

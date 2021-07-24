@@ -11,29 +11,41 @@ from .validators import validateFileExtension
 # To sync db -> python manage.py migrate --run-syncdb
 # Manually delete migrations folder, delete sqlite3 then run makemigrations then migrate 
 
+PROPULSION_METHODS = (
+    ('full electric', 'Full Electric'),
+    ('hybrid electric', 'Hybrid Electric'),
+)
+
+DOCKED_CHARGING_METHODS = (
+    ('grid power', 'Grid Power'),
+    ('engine power','Engine Power')
+)
+
 class Route(models.Model):
-    routeId            = models.AutoField(primary_key=True)
-    dateAdded          = models.DateTimeField(auto_now=False, auto_now_add=True)
-    initialSOC         = models.IntegerField(verbose_name="Initial SOC (%)")
-    batteryCapacity    = models.IntegerField(verbose_name="Battery Capacity (Kwh)") # This is in kwh.    
-    routeTitle         = models.CharField(max_length=50, verbose_name="Route Title", default="")
-    batteryRating      = models.IntegerField(verbose_name="Battery Rating (VDC)") 
-    #chargingTime       = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
-    fileName           = models.FileField(upload_to='uploads/%Y/%m/%d/', max_length=100, verbose_name="Vessel Timetable File", validators=[validateFileExtension], blank=True, null=True)  
-    thresholdPower     = models.IntegerField(verbose_name="Threshold Power", null=True)
-    departure          = ArrayField(models.DateTimeField(), verbose_name="Departure")
-    transit            = ArrayField(models.DateTimeField(), verbose_name="Transit")
-    arrival            = ArrayField(models.DateTimeField(), verbose_name="Arrival")
-    stay               = ArrayField(models.DateTimeField(), verbose_name="Stay")
-    calcSOC            = ArrayField(models.IntegerField(), null=True, blank=True)
-    minDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Min Departure Power Req") # Power requirements 
-    maxDeparturePow    = ArrayField(models.IntegerField(), verbose_name="Max Departure Power Req", null=True) # Power requirements 
-    minTransitPow      = ArrayField(models.IntegerField(), verbose_name="Min Transit Power Req", null=True) 
-    maxTransitPow      = ArrayField(models.IntegerField(), verbose_name="Max Transit Power Req", null=True)
-    minArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Min Arrival Power Req", null=True) 
-    maxArrivalPow      = ArrayField(models.IntegerField(), verbose_name="Max Arrival Power Req",null=True) 
-    minStayPow         = ArrayField(models.IntegerField(), verbose_name="Min Stay Power Req", null=True) 
-    maxStayPow         = ArrayField(models.IntegerField(), verbose_name="Max Stay Power Req", null=True)
+    routeId              = models.AutoField(primary_key=True)
+    dateAdded            = models.DateTimeField(auto_now=False, auto_now_add=True)
+    initialSOC           = models.IntegerField(verbose_name="Initial SOC (%)")
+    batteryCapacity      = models.IntegerField(verbose_name="Battery Capacity (Kwh)") # This is in kwh.    
+    routeTitle           = models.CharField(max_length=50, verbose_name="Route Title", default="")
+    batteryRating        = models.IntegerField(verbose_name="Battery Rating (VDC)")
+    propulsionMethod     = models.CharField("propulsion method", null=False, blank=False, choices=PROPULSION_METHODS, max_length=20, default=PROPULSION_METHODS[0][0])
+    dockedChargingMethod = models.CharField("docked charging method", null=True, blank=False, choices=DOCKED_CHARGING_METHODS, max_length=20, default=DOCKED_CHARGING_METHODS[0][0])
+    #chargingTime        = models.IntegerField(verbose_name="Charging Time (m)") # In minutes  
+    fileName             = models.FileField(upload_to='uploads/%Y/%m/%d/', max_length=100, verbose_name="Vessel Timetable File", validators=[validateFileExtension], blank=True, null=True)  
+    thresholdPower       = models.IntegerField("Engine Power (kw)", null=True, blank=True)
+    departure            = ArrayField(models.DateTimeField(), verbose_name="Departure")
+    transit              = ArrayField(models.DateTimeField(), verbose_name="Transit")
+    arrival              = ArrayField(models.DateTimeField(), verbose_name="Arrival")
+    stay                 = ArrayField(models.DateTimeField(), verbose_name="Stay")
+    calcSOC              = ArrayField(models.IntegerField(), null=True, blank=True)
+    minDeparturePow      = ArrayField(models.IntegerField(), verbose_name="Min Departure Power Req") # Power requirements 
+    maxDeparturePow      = ArrayField(models.IntegerField(), verbose_name="Max Departure Power Req", null=True) # Power requirements 
+    minTransitPow        = ArrayField(models.IntegerField(), verbose_name="Min Transit Power Req", null=True) 
+    maxTransitPow        = ArrayField(models.IntegerField(), verbose_name="Max Transit Power Req", null=True)
+    minArrivalPow        = ArrayField(models.IntegerField(), verbose_name="Min Arrival Power Req", null=True) 
+    maxArrivalPow        = ArrayField(models.IntegerField(), verbose_name="Max Arrival Power Req",null=True) 
+    minStayPow           = ArrayField(models.IntegerField(), verbose_name="Min Stay Power Req", null=True) 
+    maxStayPow           = ArrayField(models.IntegerField(), verbose_name="Max Stay Power Req", null=True)
     
     def save(self, force_insert=False, force_update=False, *args, **kwargs):        
             
