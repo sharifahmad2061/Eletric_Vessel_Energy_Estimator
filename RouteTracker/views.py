@@ -115,6 +115,8 @@ def getOutputData(request):
             if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
                 issue.append("Error: SOC is less than 30%"+" at "+routeInfo.departure[i].strftime("%H:%M:%S"))      
+            elif calculated_SOC > 100:
+                calculated_SOC = 100
             data.append(calculated_SOC)
             labels.append(routeInfo.departure[i])
             SOC_previous=calculated_SOC
@@ -131,6 +133,8 @@ def getOutputData(request):
             if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
                 issue.append("Error: SOC is less than 30%"+" at "+routeInfo.transit[i].strftime("%H:%M:%S"))       
+            elif calculated_SOC > 100:
+                calculated_SOC = 100
             data.append(calculated_SOC)
             labels.append(routeInfo.transit[i])
             SOC_previous=calculated_SOC
@@ -147,6 +151,8 @@ def getOutputData(request):
             if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
                 issue.append("Error: SOC is less than 30%"+" at "+routeInfo.arrival[i].strftime("%H:%M:%S"))      
+            elif calculated_SOC > 100:
+                calculated_SOC = 100
             data.append(calculated_SOC)
             labels.append(routeInfo.arrival[i])
             SOC_previous=calculated_SOC
@@ -162,6 +168,8 @@ def getOutputData(request):
             if calculated_SOC < 30:
                 print("Error: SOC is less than 30%")
                 issue.append("Error: SOC is less than 30%"+" at "+routeInfo.stay[i].strftime("%H:%M:%S"))      
+            elif calculated_SOC > 100:
+                calculated_SOC = 100
             data.append(calculated_SOC)
             labels.append(routeInfo.stay[i])
             SOC_previous=calculated_SOC
@@ -182,25 +190,3 @@ def getOutputData(request):
 
     else:
         return redirect('/')
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
